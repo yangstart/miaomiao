@@ -1,7 +1,7 @@
 <template>
   <div class="movie_body">
+    <scroller>
     <ul>
-     
       <li v-for="m in commingSoon" :key=m.id>
         <div class="pic_show">
           <img :src="m.img | setWH('128.180')" alt />
@@ -17,6 +17,7 @@
         </div>
       </li>
     </ul>
+    </scroller>
   </div>
 </template>
 
@@ -38,7 +39,7 @@ return {
 }
 </script>
 <style  scoped>
-#content .movie_body{flex: 1; overflow: auto;}
+#content .movie_body{flex: 1; height: 500px; overflow: auto;}
 .movie_body ul{margin: 0 12px; overflow: hidden;}
 .movie_body ul li{margin-top: 2px; display: flex; align-items: center; border-bottom: 1px solid #e6e6e6; padding-bottom: 10px;}
 .movie_body .pic_show{width: 64px; height: 90px;}
