@@ -1,18 +1,19 @@
 <template>
   <div class="movie_body">
     <ul>
-      <li>
+     
+      <li v-for="m in commingSoon" :key=m.id>
         <div class="pic_show">
-          <img src alt />
+          <img :src="m.img | setWH('128.180')" alt />
         </div>
         <div class="info_list">
-            <h2>无名鼠辈</h2>
-            <p>观众评 <span class="grade">9.2</span> </p>
-            <p>主演： 陈建斌</p>
-            <p>今天55家影院放映607场</p>
+            <h2>{{m.nm}}</h2>
+            <p> <span class="person">{{m.wish}}</span> 人想看</p>
+            <p>主演： {{m.star}}</p>
+            <p>{{m.rt}}上映</p>
         </div>
-        <div class="btn_pre">
-            购票
+        <div class="btn_mail">
+            预售
         </div>
       </li>
     </ul>
@@ -23,9 +24,17 @@
 export default {
 data() {
 return {
-
+  commingSoon: []
 }
 },
+ mounted(){
+    this.axios.get('/api/movieComingList?cityId=10').then(res => {
+      var msg = res.data.msg
+      if(msg === 'ok'){
+        this.commingSoon = res.data.data.comingList
+      }
+    })
+  }
 }
 </script>
 <style  scoped>

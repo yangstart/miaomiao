@@ -2,13 +2,13 @@
 <div class="search_body">
     <div class="search_input">
         <div class="search_input_wrapper">
-            <i class="iconfont">suosuo</i>
+            <i class="iconfont"></i><input type="text" v-model="message">
         </div>
     </div>
     <div class="search_result">
         <h3>电影/电视剧/综艺</h3>
         <ul>
-            <li>
+            <!-- <li>
                 <div class="img"><img src="" alt=""></div>
                 <div class="info">
                     <p><span>无名之辈</span><span>8.5</span></p>
@@ -16,23 +16,14 @@
                     <p>剧情喜剧， 犯罪</p>
                     <p>2018-11-16</p>
                 </div>
-            </li>
-            <li>
-                <div class="img"><img src="" alt=""></div>
+            </li> -->
+            <li v-for="movie in datalist" :key="movie.id">
+                <div class="img"><img :src="movie.img | setWH('128.180')" alt=""></div>
                 <div class="info">
-                    <p><span>无名之辈</span><span>8.5</span></p>
-                    <p>A Cool Fish</p>
-                    <p>剧情喜剧， 犯罪</p>
-                    <p>2018-11-16</p>
-                </div>
-            </li>
-            <li>
-                <div class="img"><img src="" alt=""></div>
-                <div class="info">
-                    <p><span>无名之辈</span><span>8.5</span></p>
-                    <p>A Cool Fish</p>
-                    <p>剧情喜剧， 犯罪</p>
-                    <p>2018-11-16</p>
+                    <p><span>{{movie.nm}}</span><span>{{movie.sc}}</span></p>
+                    <p>{{movie.enm}}</p>
+                    <p>{{movie.cat}}</p>
+                    <p>{{movie.rt}}</p>
                 </div>
             </li>
         </ul>
@@ -44,9 +35,31 @@
 export default {
 data() {
 return {
-
+    message: '',
+    datalist: []
 }
 },
+methods:{
+    cancleRequest(){
+        if (typeof this.source === 'function'){
+            this.source('终止请求')
+        }
+    }
+},
+watch: {
+   
+    message(newdata){
+       
+        this.axios.get('/api/searchList?cityId=10&kw='+newdata).then((res) => {
+            var msg = res.data.msg
+            var movies = res.data.data.movies.list
+            console.log(msg)
+            if(msg && movies){
+                this.datalist = movies
+            }
+        })
+    }
+}
 }
 </script>
 <style  scoped>

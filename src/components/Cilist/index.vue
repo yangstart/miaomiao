@@ -1,62 +1,23 @@
 <template>
   <div class="cinema_body">
     <ul>
-      <li>
+     
+      <li v-for=" c in clist" :key="c.id">
         <div>
-          <span>大地影院</span>
-          <span class="q"><span class="price">22.9</span>元起</span>
+          <span>{{c.nm}}</span>
+          <span class="q"><span class="price">{{c.sellPrice}}</span>元起</span>
         </div>
         <div class="address">
-            <span>荆州区经济开发技术区</span>
-            <span>1763.4元</span>
+            <span>{{c.addr}}</span>
+            <span>{{c.distance}}</span>
         </div>
+        <!-- key 请思考 -->
         <div class="card">
-            <div>小吃</div>
-            <div>折扣卡</div>
+           <div v-for=" (t, key) in c.tag" :key="key" v-if="t===1"  :class= "key | formatClass">{{ key | formatCard}}   </div>
+           
         </div>
       </li>
-      <li>
-        <div>
-          <span>大地影院</span>
-          <span class="q"><span class="price">22.9</span>元起</span>
-        </div>
-        <div class="address">
-            <span>荆州区经济开发技术区</span>
-            <span>1763.4元</span>
-        </div>
-        <div class="card">
-            <div>小吃</div>
-            <div>折扣卡</div>
-        </div>
-      </li>
-      <li>
-        <div>
-          <span>大地影院</span>
-          <span class="q"><span class="price">22.9</span>元起</span>
-        </div>
-        <div class="address">
-            <span>荆州区经济开发技术区</span>
-            <span>1763.4元</span>
-        </div>
-        <div class="card">
-            <div>小吃</div>
-            <div>折扣卡</div>
-        </div>
-      </li>
-      <li>
-        <div>
-          <span>大地影院</span>
-          <span class="q"><span class="price">22.9</span>元起</span>
-        </div>
-        <div class="address">
-            <span>荆州区经济开发技术区</span>
-            <span>1763.4元</span>
-        </div>
-        <div class="card">
-            <div>小吃</div>
-            <div>折扣卡</div>
-        </div>
-      </li>
+     
     </ul>
   </div>
 </template>
@@ -64,7 +25,50 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      clist: []
+    };
+  },
+  mounted(){
+    this.axios.get('/api/cinemaList?cityId=10').then((res) => {
+      var msg = res.data.msg
+      if(msg === 'ok'){
+        this.clist = res.data.data.cinemas
+      }
+    })
+  },
+  filters: {
+    formatCard(key){
+      var card = [
+        {key: 'allowRefund', value: '改签'},
+        {key: 'endorse', value: '退'},
+        {key: 'sell', value: '折扣卡'},
+        {key: 'snack', value: '小吃'}
+      ]
+      for (let i = 0; i < card.length; i++) {
+         if(card[i].key == key){
+           return card[i].value
+         }
+        
+      }
+      return ''
+    },
+
+     formatClass(key){
+      var card = [
+        {key: 'allowRefund', value: 'bl'},
+        {key: 'endorse', value: 'bl'},
+        {key: 'sell', value: 'or'},
+        {key: 'snack', value: 'or'}
+      ]
+      for (let i = 0; i < card.length; i++) {
+         if(card[i].key == key){
+           return card[i].value
+         }
+        
+      }
+      return ''
+    }
   }
 };
 </script>

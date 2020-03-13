@@ -3,72 +3,23 @@
     <div class="city_list">
         <div class="city_hot">
             <h2>热门城市</h2>
-            <ul class="clearfix">
-                <li>上海</li>
-                <li>上海</li>
-                <li>上海</li>
-                <li>上海</li>
-                <li>上海</li>
-                <li>上海</li>
+            <ul v-for="h in hot" :key="h.id" class="clearfix">
+                <li>{{h.nm}}</li>
+               
             </ul>
         </div>
-        <div class="city_sort">
-            <div>
-                <h2>A</h2>
-                <ul>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li><li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
-                    <li>阿拉善盟</li>
+        <div class="city_sort" ref="city_sort">
+            <div v-for="s in sortList" :key="s.index">
+                <h2>{{s.index}}</h2>
+                <ul v-for="n in s.list" :key="n.id">
+                    <li>{{n.nm}}</li>
                 </ul>
             </div>
         </div>
     </div>
-    <div class="city_index">
-        <ul>
-            <li>A</li>
-            <li>A</li>
-            <li>A</li>
-            <li>A</li>
-            <li>A</li>
+    <div>
+        <ul class="city_index">
+            <li  v-for="(s, index) in sortList" :key="s.id" @touchstart=handleTouchIndex(index)>{{s.index}}</li>
         </ul>
     </div>
 </div>
@@ -80,14 +31,15 @@ data() {
 return {
     hot: [],
     sortList: [],
-    list:[]
 }
 },
 mounted(){
     this.axios.get('/api/cityList').then((res) => { 
     if (res.data.msg == 'ok'){
-        this.list = res.data.data.cities
-        this.fotmat(this.list)
+        // 注意要与返回值保持一致
+        var { hot, citylist} = this.fotmat(res.data.data.cities)
+        this.hot = hot
+        this.sortList = citylist
     }
     })
     
@@ -96,6 +48,11 @@ methods:{
    fotmat(cities){
        var citylist = []
        var hot = []
+       for(var i=0; i<cities.length;i++){
+           if(cities[i].isHot === 1){
+               hot.push(cities[i])
+           }
+       }
        for( var i=0; i< cities.length; i++){
            var firstLetter = cities[i].py.substring(0,1).toUpperCase()
            
@@ -127,9 +84,12 @@ methods:{
             }
             return true
         }
-            console.log(citylist)
-
+        return {hot, citylist}
    },
+   handleTouchIndex(index){
+       var h2 = this.$refs.city_sort.getElementsByTagName('h2')
+       this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+   }
   
 }
 }
