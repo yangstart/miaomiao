@@ -1,10 +1,12 @@
 <template>
 <div class="city_body">
+    <loading v-if="sortList.length===0" />
+    <scroller v-else ref="city_list">
     <div class="city_list">
         <div class="city_hot">
             <h2>热门城市</h2>
             <ul v-for="h in hot" :key="h.id" class="clearfix">
-                <li>{{h.nm}}</li>
+                <li @tap="handleToCity(h.nm, h.id)">{{h.nm}}</li>
                
             </ul>
         </div>
@@ -12,11 +14,12 @@
             <div v-for="s in sortList" :key="s.index">
                 <h2>{{s.index}}</h2>
                 <ul v-for="n in s.list" :key="n.id">
-                    <li>{{n.nm}}</li>
+                    <li @tap="handleToCity(h.nm, h.id)">{{n.nm}}</li>
                 </ul>
             </div>
         </div>
     </div>
+    </scroller>
     <div>
         <ul class="city_index">
             <li  v-for="(s, index) in sortList" :key="s.id" @touchstart=handleTouchIndex(index)>{{s.index}}</li>
@@ -34,15 +37,26 @@ return {
 }
 },
 mounted(){
-    this.axios.get('/api/cityList').then((res) => { 
-    if (res.data.msg == 'ok'){
-        // 注意要与返回值保持一致
-        var { hot, citylist} = this.fotmat(res.data.data.cities)
-        this.hot = hot
-        this.sortList = citylist
+        var cl = window.localStorage.getItem('cityList')
+        var hcl = window.localStorage.getItem('hotCity')
+        if (cl && hcl){
+            this.sortList = JSON.parse(cl)
+            this.hot = JSON.parse(hcl)
+        }
+
+    else{
+        this.axios.get('/api/cityList').then((res) => { 
+        if (res.data.msg == 'ok'){
+            // 注意要与返回值保持一致
+            var { hot, citylist} = this.fotmat(res.data.data.cities)
+            this.hot = hot
+            this.sortList = citylist
+            window.localStorage.setItem('cityList', JSON.stringify(this.sortList))
+            window.localStorage.setItem('hotCity', JSON.stringify(this.hot))
+        }
+        })
+       
     }
-    })
-    
 },
 methods:{
    fotmat(cities){
@@ -88,7 +102,14 @@ methods:{
    },
    handleTouchIndex(index){
        var h2 = this.$refs.city_sort.getElementsByTagName('h2')
-       this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+    //    this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+    this.$refs.city_list.toScrollTop(-h2[index].offsetTop)
+   },
+   handleToCity(nm, id){
+       this.$store.commit('city/CITY_INFO', {nm, id})
+       window.localStorage.setItem('NowCity', nm)
+       window.localStorage.setItem('NowCityId', id)
+       this.$router.push('/movie/nowPlaying')
    }
   
 }
@@ -96,7 +117,7 @@ methods:{
 </script>
 <style  scoped>
 #content .city_body{margin-top: 100px; display: flex; width: 100%; position: absolute; top: 0;bottom: 0;}
-.city_body .city_list{ flex: 1; overflow: auto; background: #fff5f0;}
+.city_body .city_list{  flex: 1; overflow: auto; background: #fff5f0;}
 .city_body .city_list::-webkit-scrollbar{background-color: transparent; width: 0;}
 .city_body .city_hot{ margin-top: 20px;}
 .city_body .city_hot h2{ padding-left: 15px;  line-height: 10px; font-size: 14px; background: #f0f0f0; font-weight: normal;}
@@ -105,6 +126,6 @@ methods:{
 .city_body .city_sort h2{ padding-left:15px; line-height: 30px;  font-size: 14px; background: #f0f0f0; font-weight: normal;}
 .city_body .city_sort ul{  padding-left: 10px; margin-top: 10px;}
 .city_body .city_sort ul li{ line-height: 30px;}
-.city_body .city_index{ width: 20px; display: flex;flex-direction: column; justify-content: center;text-align: center;border-left: 1px solid #e6e6e6;}
+.city_body .city_index{  width: 20px; display: flex;flex-direction: column; justify-content: center;text-align: center;border-left: 1px solid #e6e6e6;}
 
 </style>
