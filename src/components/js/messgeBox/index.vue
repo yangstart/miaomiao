@@ -21,4 +21,5 @@ export default {
     .messageBox > div{display: flex;position: absolute;bottom: 0;width: 100%;border: 1px solid #ccc;}
     .messageBox > div div{flex: 1; text-align: center; line-height: 30px ;border: 1px solid #ccc;}
     .messageBox > div div:last-child{border: none;}
+    .box{color:white}
 </style>
