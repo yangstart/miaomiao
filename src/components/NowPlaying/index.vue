@@ -3,7 +3,7 @@
     <scroller :HandleToTouchEnd="HandleToTouchEnd" :HandleToScroll="HandleToScroll">
     <ul>
       <li class="pullClass">{{pullDownMsg}}</li>
-      <li v-for="m in movieList" :key="m.id">
+      <li v-for="m in movieList" :key="m.id" @tap="handleDetail(m.id)">
         <div class="pic_show">
           <img :src="m.img | setWH('128.180')" alt />
         </div>
@@ -66,6 +66,9 @@ export default {
         }
         })
       }
+    },
+    handleDetail(id){
+      this.$router.push(`/movie/detail/1/${id}`)
     }
   }
 };

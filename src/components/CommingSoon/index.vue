@@ -2,7 +2,7 @@
   <div class="movie_body">
     <scroller>
     <ul>
-      <li v-for="m in commingSoon" :key=m.id>
+      <li v-for="m in commingSoon" :key=m.id @tap="handleDetail(m.id)">
         <div class="pic_show">
           <img :src="m.img | setWH('128.180')" alt />
         </div>
@@ -42,6 +42,11 @@ return {
         this.prevCityId = cityId
       }
     })
+  },
+  methods:{
+    handleDetail(id){
+      this.$router.push(`/movie/detail/2/${id}`)
+    }
   }
 }
 </script>
