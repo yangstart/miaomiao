@@ -49,13 +49,12 @@ methods:{
 watch: {
    
     message(newdata){
-       
-        this.axios.get('/api/searchList?cityId=10&kw='+newdata).then((res) => {
+       var cityId = this.$store.state.city.id
+        this.axios.get('/api/searchList?cityId='+cityId+'&kw='+newdata).then((res) => {
             var msg = res.data.msg
-            var movies = res.data.data.movies.list
-            console.log(msg)
+            var movies = res.data.data.movies
             if(msg && movies){
-                this.datalist = movies
+                this.datalist = movies.list
             }
         })
     }

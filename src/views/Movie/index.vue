@@ -26,6 +26,7 @@
 <script>
 import tabBar from "@/components/tabBar";
 import vheader from "@/components/header";
+import {messageBox} from '@/components/js'
 export default {
   data() {
     return {};
@@ -33,6 +34,32 @@ export default {
   components: {
     tabBar,
     vheader
+  },
+  mounted(){
+    setTimeout(() => {}, 2000)
+    this.axios.get('/api/getLocation').then(res => {
+      var msg = res.data.msg
+      if(msg === 'ok'){
+        var nm =  res.data.data.nm
+        var id = res.data.data.id
+        // 注意数字和字符串的不同
+        if(this.$store.state.city.id == id){return}
+          messageBox({
+          title: '定位',
+          content: nm,
+          cancel: '取消',
+          ok: '切换定位',
+          handleCancel(){
+          },
+          handleOK(){
+            window.localStorage.setItem('NowCity', nm)
+            window.localStorage.setItem('NowCityId', id)
+            window.location.reload()
+          }
+        })
+      }
+    })
+  
   }
 };
 </script>

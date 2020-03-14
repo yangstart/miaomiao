@@ -28,40 +28,22 @@ export default {
   data() {
     return {
       movieList: [],
-      pullDownMsg: ""
+      pullDownMsg: "",
+      prevCityId: -1
     };
   },
-  mounted() {
-    this.axios.get("/api/movieOnInfoList?cityId=10").then(res => {
+  
+  activated() {
+    var cityId = this.$store.state.city.id
+    if (cityId === this.prevCityId){
+      return
+    }
+
+    this.axios.get("/api/movieOnInfoList?cityId="+ cityId).then(res => {
       var msg = res.data.msg;
       if (msg === "ok") {
         this.movieList = res.data.data.movieList;
-        // this.$nextTick(() => {
-        //   var scroll = new BScroll(this.$refs.movie_body, {
-        //     tap: true,
-        //     probeType: 1
-        //   });
-        //   scroll.on("scroll", pos => {
-        //     if (pos.y > 30) {
-        //       this.pullDownMsg = "正在更新中";
-        //     }
-        //   });
-       
-        //   scroll.on('touchEnd', pos => {
-        //     if(pos.y>30){
-        //       this.axios.get("/api/movieOnInfoList?cityId=10").then(res => {
-        //       var msg = res.data.msg
-        //     if (msg === 'ok'){
-        //       this.pullDownMsg = '更新成功'
-        //       setTimeout(() => {
-        //         this.pullDownMsg =''
-        //       }, 2000);
-        //       this.movieList = res.data.data.movieList
-        //       }
-        //       })
-        //     }
-        //   })
-        // });
+        this.prevCityId = cityId
       }
     });
   },
